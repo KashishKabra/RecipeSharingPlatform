@@ -98,13 +98,20 @@ const Login = () => {
     
     const [account, toggleAccount] = useState('login');  
     const [signup,setSignup] = useState(signupInitialValues);
-
+    const [error, setError] =useState('');
     const onInputChange = (e) =>{
         setSignup({...signup, [e.target.name]:e.target.value});//dont want to override
     }
 
     const signupUser = async () =>{
         let response= await API.userSignup(signup);
+        if(response.isSuccess){
+            setError('');
+            setSignup(signupInitialValues);
+            toggleAccount('login');
+        } else{
+            setError('Something went wrong, try again');
+        }
     }
 
     return (
@@ -127,6 +134,7 @@ const Login = () => {
                             variant="standard"
                             fullWidth
                         />
+                        {error && <Error>{error}</Error>}
                         <LoginButton variant="contained">
                             Login
                         </LoginButton>
@@ -160,6 +168,8 @@ const Login = () => {
                             name='password'
                             fullWidth
                         />
+
+                        {error && <Error>{error}</Error>}
                         <SignupButton variant="contained" onClick={() => signupUser()}>
                             Signup
                         </SignupButton>

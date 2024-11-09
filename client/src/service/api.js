@@ -57,6 +57,7 @@ const processResponse = (response) => {
 //////////////////////////////
 
 const processError= (error)=>{
+    console.error("Detailed Error:", error); // Log full error object
     if(error.response){
         // Request made and server responded with a status code 
         // that falls out of the range of 2xx
