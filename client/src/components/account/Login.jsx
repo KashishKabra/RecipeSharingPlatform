@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Box, TextField, Button, Typography, styled } from '@mui/material';
 
 const Component = styled(Box)`
@@ -76,37 +77,77 @@ const Error = styled(Typography)`
     line-height: 0;
     margin-top: 10px;
     font-weight: 600;
-    text-align: center; /* Center the error message */
+    text-align: center; 
 `;
 
 const Login = () => {
     const imageURL = "https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png";
     
+    const [account, toggleAccount] = useState('login');  
+    
+
+
     return (
         <Component>
             <Overlay />
             <Wrapper>
                 <Image src={imageURL} alt="login" />
-                <TextField
-                    id="standard-basic"
-                    label="Username"
-                    variant="standard"
-                    fullWidth
-                />
-                <TextField
-                    id="standard-basic"
-                    label="Password"
-                    type="password"
-                    variant="standard"
-                    fullWidth
-                />
-                <LoginButton variant="contained">
-                    Login
-                </LoginButton>
-                <Typography style={{ textAlign: 'center' }}>OR</Typography>
-                <SignupButton variant="text">
-                    Create an Account
-                </SignupButton>
+                
+                {/* Display Login Form */}
+                {account === 'login' ? (
+                    <>
+                        <TextField
+                            id="username"
+                            label="Username"
+                            variant="standard"
+                            fullWidth
+                        />
+                        <TextField
+                            id="password"
+                            label="Password"
+                            type="password"
+                            variant="standard"
+                            fullWidth
+                        />
+                        <LoginButton variant="contained">
+                            Login
+                        </LoginButton>
+                        <Typography style={{ textAlign: 'center' }}>OR</Typography>
+                        <SignupButton variant="text" onClick={() => toggleAccount('signup')}>
+                            Create an Account
+                        </SignupButton>
+                    </>
+                ) : (
+                    // Display Signup Form
+                    <>
+                        <TextField
+                            id="name"
+                            label="Enter Name"
+                            variant="standard"
+                            fullWidth
+                        />
+                        <TextField
+                            id="username"
+                            label="Username"
+                            variant="standard"
+                            fullWidth
+                        />
+                        <TextField
+                            id="password"
+                            label="Password"
+                            type="password"
+                            variant="standard"
+                            fullWidth
+                        />
+                        <SignupButton variant="contained">
+                            Signup
+                        </SignupButton>
+                        <Typography style={{ textAlign: 'center' }}>OR</Typography>
+                        <LoginButton variant="text" onClick={() => toggleAccount('login')}>
+                            Already have an Account
+                        </LoginButton>
+                    </>
+                )}
             </Wrapper>
         </Component>
     );
