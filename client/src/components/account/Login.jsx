@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Typography, styled } from '@mui/material';
 
+import {API} from '../../service/api';
+
+
 const Component = styled(Box)`
     display: flex;
     justify-content: center;
@@ -79,13 +82,30 @@ const Error = styled(Typography)`
     font-weight: 600;
     text-align: center; 
 `;
+const loginInitialValues = {
+    username: '',
+    password: ''
+};
+
+const signupInitialValues = {
+    name: '',
+    username: '',
+    password: '',
+};
 
 const Login = () => {
     const imageURL = "https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png";
     
     const [account, toggleAccount] = useState('login');  
-    
+    const [signup,setSignup] = useState(signupInitialValues);
 
+    const onInputChange = (e) =>{
+        setSignup({...signup, [e.target.name]:e.target.value});//dont want to override
+    }
+
+    const signupUser = async () =>{
+        let response= await API.userSignup(signup);
+    }
 
     return (
         <Component>
@@ -97,13 +117,11 @@ const Login = () => {
                 {account === 'login' ? (
                     <>
                         <TextField
-                            id="username"
                             label="Username"
                             variant="standard"
                             fullWidth
                         />
                         <TextField
-                            id="password"
                             label="Password"
                             type="password"
                             variant="standard"
@@ -121,25 +139,28 @@ const Login = () => {
                     // Display Signup Form
                     <>
                         <TextField
-                            id="name"
                             label="Enter Name"
                             variant="standard"
+                            onChange={(e) => onInputChange(e) }
+                            name='name'
                             fullWidth
                         />
                         <TextField
-                            id="username"
                             label="Username"
                             variant="standard"
+                            onChange={(e) => onInputChange(e)}
+                            name='username'
                             fullWidth
                         />
                         <TextField
-                            id="password"
                             label="Password"
                             type="password"
                             variant="standard"
+                            onChange={(e) => onInputChange(e)}
+                            name='password'
                             fullWidth
                         />
-                        <SignupButton variant="contained">
+                        <SignupButton variant="contained" onClick={() => signupUser()}>
                             Signup
                         </SignupButton>
                         <Typography style={{ textAlign: 'center' }}>OR</Typography>
