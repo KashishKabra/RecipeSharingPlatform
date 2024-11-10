@@ -13,7 +13,7 @@ const postSchema = mongoose.Schema({
     },
     picture: {
         type:String,
-        required : true,
+        required : false,
  
     },
     username: {
@@ -27,7 +27,7 @@ const postSchema = mongoose.Schema({
 
     },
     createdDate: {
-        type:String,
+        type:Date,
     
     },
 });
