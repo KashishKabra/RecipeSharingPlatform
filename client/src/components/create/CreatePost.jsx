@@ -58,8 +58,8 @@ const CreatePost = () => {
     const { account } = useContext(DataContext);
 
     const url = post.picture 
-        ? post.picture 
-        : 'https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80';
+    ? post.picture.replace("https://localhost", "http://localhost") 
+    : 'https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80';
 
     useEffect(() => {
         const getImage = async () => { 
@@ -117,7 +117,7 @@ const CreatePost = () => {
                 />
                 <InputTextField 
                     placeholder='Title' 
-                    onChange={handleChange} 
+                    onChange={(e)=>handleChange(e)} 
                     name='title'
                 />
                 <Button onClick={savePost} variant='contained'>Publish</Button>
@@ -126,7 +126,7 @@ const CreatePost = () => {
                 minRows={5}
                 placeholder="Tell your recipe..."            
                 name='description'
-                onChange={handleChange}
+                onChange={(e)=>handleChange(e)} 
             />
         </Container>
     );

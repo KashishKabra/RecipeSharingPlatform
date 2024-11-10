@@ -2,7 +2,7 @@ import { useState ,useEffect, useContext} from 'react';
 import { Box, Typography, styled} from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 
-import { useParams } from 'react-router-dom';
+import {Link, useParams , useNavigate} from 'react-router-dom';
 import {API} from '../../service/api';
 
 import { DataContext } from '../../context/DataProvider';
@@ -54,11 +54,13 @@ const Description = styled(Typography)`
 const DetailView = () => {
     const [post,setPost]=useState({});
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const { account} = useContext(  DataContext);
 
     // post.picture ? post.picture :
-    const url = 'https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80';
+    const url = post.picture 
+    ? post.picture.replace("https://localhost", "http://localhost") :'https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80';
 
     useEffect(() => {
         const fetchData = async() => {
@@ -70,6 +72,14 @@ const DetailView = () => {
         fetchData();
     },[])
 
+
+    const deleteBlog = async () =>{
+        let response = await API.deletePost(post._id);
+        if(response.isSuccess){
+            navigate('/');
+        }
+    }
+
     return (
         <Container>
             <Image src={url} alt="post"/>
@@ -78,8 +88,11 @@ const DetailView = () => {
                 {
                     account.username === post.username &&
                     <>
-                        <EditIcon color="primary"/>
-                        <DeleteIcon color="error"/>
+                        <Link to={`/update/${post._id}`} >
+                            <EditIcon color="primary"/>
+                        </Link>
+                        
+                        <DeleteIcon onClick={()=> deleteBlog()} color="error"/>
                     </>
                 }
                 
