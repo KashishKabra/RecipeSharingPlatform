@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box ,Grid2 } from '@mui/material';
 import { API } from '../../../service/api';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 //components
 import Post from './Post';
@@ -27,7 +27,9 @@ const Posts = () => {
             {
                 posts && posts.length > 0 ? posts.map(post => (
                     <Grid2 item lg={3} sm={4} xs={12}>
-                        <Post post={post}/>
+                        <Link to={`details/${post._id}`} style={{ textDecoration:'none', color:'inherit'}}>
+                            <Post post={post}/>
+                        </Link>
                     </Grid2>
                 )) : <Box style={{ color:'#878787', margin:'30px 80px'}}>No data to display</Box>
             }
