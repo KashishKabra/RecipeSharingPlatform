@@ -11,7 +11,7 @@ const postSchema = mongoose.Schema({
         required : true,
     
     },
-    picturee: {
+    picture: {
         type:String,
         required : true,
  

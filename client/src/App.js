@@ -30,7 +30,7 @@ function App() {
     <DataProvider>
       <BrowserRouter>
       {/* style={{marginTop:64}} */}
-        <div >
+        <div style={{marginTop:64}} >
           
           <Routes>
             <Route path='/login' element={<Login isUserAuthenticated={isUserAuthenticated} />} />

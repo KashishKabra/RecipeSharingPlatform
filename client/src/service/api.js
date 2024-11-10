@@ -1,6 +1,6 @@
 //calling api
 
-import axios from 'axios';
+import * as axios from 'axios';
 import { API_NOTIFICATION_MESSAGES, SERVICE_URLS } from '../constants/config';
 import{ getAccessToken} from '../utils/common-utils';
 const API_URL = 'http://localhost:8000';
@@ -9,7 +9,8 @@ const axiosInstance = axios.create({
     baseURL:API_URL,
     timeout: 10000,
     headers: {
-        "content-Type" :"application/json"
+        "Accept": "application/json, multipart/form-data", 
+        "Content-Type": "application/json"
     }
 })
 

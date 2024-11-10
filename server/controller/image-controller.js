@@ -18,17 +18,15 @@ export const uploadImage = async (request, response) => {
     }
     const imageUrl = `${url}/file/${request.file.filename}`;
 
-    return response.status(200).json(imageURL);
+    return response.status(200).json({imageUrl});
 }
 
-export const getImage = async (request,reponse) => {
-    try{
-        const file = await gfs.files.findOne({filename: request.params.filename});
+export const getImage = async (request, response) => {
+    try {   
+        const file = await gfs.files.findOne({ filename: request.params.filename });
         const readStream = gridfsBucket.openDownloadStream(file._id);
         readStream.pipe(response);
-    } catch(error){
-        return response.status(500).json({msg: error.message})
-
+    } catch (error) {
+        response.status(500).json({ msg: error.message });
     }
-
 }
