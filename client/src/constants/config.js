@@ -32,5 +32,5 @@ export const SERVICE_URLS = {
     uploadFile: {url: '/file/upload', method: 'POST'},
     createPost: { url : 'create', method:'POST'},
 
-    getAllPosts: { url: '/posts', method:'GET'}
+    getAllPosts: { url: '/posts', method:'GET',params:true}
 }

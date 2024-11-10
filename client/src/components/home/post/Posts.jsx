@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box ,Grid2 } from '@mui/material';
 import { API } from '../../../service/api';
-
+import { useSearchParams } from 'react-router-dom';
 
 //components
 import Post from './Post';
@@ -9,15 +9,18 @@ import Post from './Post';
 const Posts = () => {
     const [posts, setPosts] = useState([]);
 
+    const [searchParams] = useSearchParams();
+    const category = searchParams.get('category');
+
     useEffect(()=>{
         const fetchData = async () => {
-            let response = await API.getAllPosts();
+            let response = await API.getAllPosts({category:category || ''});
             if (response.isSuccess) {
                 setPosts(response.data);
             }
         }
         fetchData();
-    },[])
+    },[category])
 
     return (
         <>
