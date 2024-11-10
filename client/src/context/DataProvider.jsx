@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 
-
+//global data
 export const DataContext = createContext(null);
 
 const DataProvider = ({ children }) => {

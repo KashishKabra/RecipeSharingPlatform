@@ -110,7 +110,7 @@ const Login = ({isUserAuthenticated}) => {
     const onInputChange = (e) =>{
         setSignup({...signup, [e.target.name]:e.target.value});//dont want to override
     }
-
+    // { ...signup } uses the spread operator to copy all key-value pairs from the current signup state into a new object.
 
     const signupUser = async () =>{
         let response= await API.userSignup(signup);
