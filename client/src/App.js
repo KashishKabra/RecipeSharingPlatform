@@ -52,6 +52,7 @@ function App() {
             <Route path='/update/:id' element={<PrivateRoute isAuthenticated={isAuthenticated}/>}>
               <Route path='/update/:id' element={<Update />} />
             </Route>
+          
 
 
           </Routes>
