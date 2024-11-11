@@ -1,60 +1,41 @@
-import { useState, useContext } from 'react';
-import { Box, TextField, Button, Typography, styled } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
 
-import {API} from '../../service/api';
-import { DataContext } from '../../context/DataProvider';
-
+import { TextField, Box, Button, Typography, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
+import { API } from '../../service/api';
+import { DataContext } from '../../context/DataProvider';
+
 const Component = styled(Box)`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Vertically center the component */
-    background: url('https://hungerbay.com/assets/images/b6.jpg') no-repeat center center; /* Replace with your food image URL */
-    background-size: cover; /* Ensure the image covers the entire screen */
-    position: relative;
+    width: 400px;
+    margin: auto;
+    box-shadow: 5px 2px 5px 2px rgb(0 0 0/ 0.6);
 `;
 
-const Overlay = styled(Box)`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark overlay */
-    z-index: 1; /* Ensure it sits behind the content */
-`;
+const Image = styled('img')({
+    width: 100,
+    display: 'flex',
+    margin: 'auto',
+    padding: '50px 0 0'
+});
 
 const Wrapper = styled(Box)`
     padding: 25px 35px;
     display: flex;
+    flex: 1;
+    overflow: auto;
     flex-direction: column;
-    gap: 20px; /* Use gap for consistent spacing */
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px; /* Ensure the form doesn't exceed this width */
-    z-index: 2; /* Ensure the content sits above the overlay */
+    & > div, & > button, & > p {
+        margin-top: 20px;
+    }
 `;
-
-const Image = styled('img')({
-    width: 120,
-    margin: '0 auto', /* Center the image */
-    paddingBottom: '20px', /* Adjust padding for better spacing */
-});
 
 const LoginButton = styled(Button)`
     text-transform: none;
     background: #FB641B;
     color: #fff;
     height: 48px;
-    border-radius: 4px;
-    width: 100%; /* Make the button fill the available width */
-    &:hover {
-        background: #ff8b3d; /* Slightly darker hover effect */
-    }
+    border-radius: 2px;
 `;
 
 const SignupButton = styled(Button)`
@@ -62,18 +43,13 @@ const SignupButton = styled(Button)`
     background: #fff;
     color: #2874f0;
     height: 48px;
-    border-radius: 4px;
-    width: 100%; /* Ensure the button takes full width */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    &:hover {
-        background: #f1f1f1; /* Light background on hover */
-    }
+    border-radius: 2px;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%);
 `;
 
 const Text = styled(Typography)`
     color: #878787;
     font-size: 12px;
-    text-align: center; /* Center the text */
 `;
 
 const Error = styled(Typography)`
@@ -82,8 +58,8 @@ const Error = styled(Typography)`
     line-height: 0;
     margin-top: 10px;
     font-weight: 600;
-    text-align: center; 
-`;
+`
+
 const loginInitialValues = {
     username: '',
     password: ''
@@ -95,134 +71,90 @@ const signupInitialValues = {
     password: '',
 };
 
-const Login = ({isUserAuthenticated}) => {
-    const imageURL = "https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png";
-    
-    const [account, toggleAccount] = useState('login');  
-    const [signup,setSignup] = useState(signupInitialValues);
-    const [login,setLogin] = useState(loginInitialValues);
-    const [error, setError] =useState('');
+const Login = ({ isUserAuthenticated }) => {
+    const [login, setLogin] = useState(loginInitialValues);
+    const [signup, setSignup] = useState(signupInitialValues);
+    const [error, showError] = useState('');
+    const [account, toggleAccount] = useState('login');
 
-    const {setAccount}=useContext(DataContext);
+    const navigate = useNavigate();
+    const { setAccount } = useContext(DataContext);
 
-    const navigate=useNavigate();
+    const imageURL = 'https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png';
 
-    const onInputChange = (e) =>{
-        setSignup({...signup, [e.target.name]:e.target.value});//dont want to override
+    useEffect(() => {
+        showError(false);
+    }, [login])
+
+    const onValueChange = (e) => {
+        setLogin({ ...login, [e.target.name]: e.target.value });
     }
-    // { ...signup } uses the spread operator to copy all key-value pairs from the current signup state into a new object.
 
-    const signupUser = async () =>{
-        let response= await API.userSignup(signup);
-        if(response.isSuccess){
-            setError('');
+    const onInputChange = (e) => {
+        setSignup({ ...signup, [e.target.name]: e.target.value });
+    }
+
+    const loginUser = async () => {
+        let response = await API.userLogin(login);
+        if (response.isSuccess) {
+            showError('');
+
+            sessionStorage.setItem('accessToken', `Bearer ${response.data.accessToken}`);
+            sessionStorage.setItem('refreshToken', `Bearer ${response.data.refreshToken}`);
+            setAccount({ name: response.data.name, username: response.data.username });
+            
+            isUserAuthenticated(true)
+            setLogin(loginInitialValues);
+            navigate('/');
+        } else {
+            showError('Something went wrong! please try again later');
+        }
+    }
+
+    const signupUser = async () => {
+        let response = await API.userSignup(signup);
+        if (response.isSuccess) {
+            showError('');
             setSignup(signupInitialValues);
             toggleAccount('login');
-        } else{
-            setError('Something went wrong, try again');
+        } else {
+            showError('Something went wrong! please try again later');
         }
     }
 
-    const onValueChange=(e)=>{
-        setLogin({ ...login, [e.target.name]: e.target.value})
+    const toggleSignup = () => {
+        account === 'signup' ? toggleAccount('login') : toggleAccount('signup');
     }
-
-    const loginUser = async () =>{
-        let response = await API.userLogin(login);
-        if (response.isSuccess){
-            setError('');
-
-            sessionStorage.setItem('accessToken',`Bearer ${response.data.accessToken}`);
-            sessionStorage.setItem('refreshToken',`Bearer ${response.data.refreshToken}`);
-
-            //GLOBALL STORAGE CUX USE EVERYWHERE--CONTEX API 
-            setAccount({ username: response.data.username , name: response.data.name})
-
-            isUserAuthenticated(true);
-
-            navigate('/');//go to home page
-
-        }else{
-            setError('Something went wrong, try again!');
-        }
-    }
-
 
     return (
         <Component>
-            <Overlay />
-            <Wrapper>
-                <Image src={imageURL} alt="login" />
-                
-                {/* Display Login Form */}
-                {account === 'login' ? (
-                    <>
-                        <TextField
-                            label="Username"
-                            variant="standard"
-                            value={login.username}
-                            onChange={(e)=>onValueChange(e)}
-                            name="username"
-                            fullWidth
-                        />
-                        <TextField
-                            label="Password"
-                            type="password"
-                            variant="standard"
-                            value={login.password}
-                            onChange={(e)=>onValueChange(e)}
-                            name="password"
-                            fullWidth
-                        />
-                        {error && <Error>{error}</Error>}
-                        <LoginButton 
-                            variant="contained"
-                            onClick={()=> loginUser()}
-                        >Login</LoginButton>
-                        <Typography style={{ textAlign: 'center' }}>OR</Typography>
-                        <SignupButton variant="text" onClick={() => toggleAccount('signup')}>
-                            Create an Account
-                        </SignupButton>
-                    </>
-                ) : (
-                    // Display Signup Form
-                    <>
-                        <TextField
-                            label="Enter Name"
-                            variant="standard"
-                            onChange={(e) => onInputChange(e) }
-                            name='name'
-                            fullWidth
-                        />
-                        <TextField
-                            label="Username"
-                            variant="standard"
-                            onChange={(e) => onInputChange(e)}
-                            name='username'
-                            fullWidth
-                        />
-                        <TextField
-                            label="Password"
-                            type="password"
-                            variant="standard"
-                            onChange={(e) => onInputChange(e)}
-                            name='password'
-                            fullWidth
-                        />
+            <Box>
+                <Image src={imageURL} alt="blog" />
+                {
+                    account === 'login' ?
+                        <Wrapper>
+                            <TextField variant="standard" value={login.username} onChange={(e) => onValueChange(e)} name='username' label='Enter Username' />
+                            <TextField variant="standard" value={login.password} onChange={(e) => onValueChange(e)} name='password' label='Enter Password' />
 
-                        {error && <Error>{error}</Error>}
-                        <SignupButton variant="contained" onClick={() => signupUser()}>
-                            Signup
-                        </SignupButton>
-                        <Typography style={{ textAlign: 'center' }}>OR</Typography>
-                        <LoginButton variant="text" onClick={() => toggleAccount('login')}>
-                            Already have an Account
-                        </LoginButton>
-                    </>
-                )}
-            </Wrapper>
+                            {error && <Error>{error}</Error>}
+
+                            <LoginButton variant="contained" onClick={() => loginUser()} >Login</LoginButton>
+                            <Text style={{ textAlign: 'center' }}>OR</Text>
+                            <SignupButton onClick={() => toggleSignup()} style={{ marginBottom: 50 }}>Create an account</SignupButton>
+                        </Wrapper> :
+                        <Wrapper>
+                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='name' label='Enter Name' />
+                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='username' label='Enter Username' />
+                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='password' label='Enter Password' />
+
+                            <SignupButton onClick={() => signupUser()} >Signup</SignupButton>
+                            <Text style={{ textAlign: 'center' }}>OR</Text>
+                            <LoginButton variant="contained" onClick={() => toggleSignup()}>Already have an account</LoginButton>
+                        </Wrapper>
+                }
+            </Box>
         </Component>
-    );
-};
+    )
+}
 
 export default Login;

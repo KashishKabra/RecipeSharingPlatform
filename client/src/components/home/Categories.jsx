@@ -49,7 +49,7 @@ const Categories = () => {
     return (
         <>
             <StyledLink to={`/create?category=${category || ''}`} >
-                <StyledButton variant="contained">Create Blog</StyledButton>
+                <StyledButton variant="contained">Share Recipe</StyledButton>
             </StyledLink>
             <StyledLink as="a" href="http://localhost:3002/">
     <StyledButton variant="contained">Generate Recipe</StyledButton>
